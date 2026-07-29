@@ -2,8 +2,8 @@
 //  ResourceDetailView.swift
 //  PublicResourceFinder
 //
-//  The full page for a single resource, reached from "Learn More"
-//  or from tapping a row in the list.
+//  The full page for a single resource.
+//  On iPad the text column is capped so lines stay readable.
 //
 
 import SwiftUI
@@ -15,6 +15,15 @@ struct ResourceDetailView: View {
 
     @Environment(\.openURL) private var openURL
     @Environment(FavoritesStore.self) private var favorites
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
+
+    private var metrics: AdaptiveMetrics {
+        AdaptiveMetrics(
+            horizontalSizeClass: hSizeClass,
+            verticalSizeClass: vSizeClass
+        )
+    }
 
     private var isSaved: Bool {
         favorites.isFavorite(resource)
@@ -24,11 +33,11 @@ struct ResourceDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 20) {
 
-                // MARK: Header image
-
+                // Full-bleed header image
                 ResourceImageView(resource: resource)
-                    .frame(height: 220)
+                    .frame(height: metrics.detailImageHeight)
 
+                // Text column, capped on wide screens
                 VStack(alignment: .leading, spacing: 20) {
 
                     // MARK: Title
@@ -48,7 +57,6 @@ struct ResourceDetailView: View {
 
                     HStack(spacing: 12) {
 
-                        // Tapping this opens a Drive / Walk / Transit menu.
                         DirectionsMenu(resource: resource) {
                             actionLabel(
                                 title: "Directions",
@@ -109,14 +117,13 @@ struct ResourceDetailView: View {
                             .fixedSize(horizontal: false, vertical: true)
                     }
 
-                    // MARK: Disclaimer
-
                     Text("Hours and services can change. Call ahead before visiting. Data collected July 2026.")
                         .font(.caption2)
                         .foregroundStyle(.tertiary)
                         .padding(.top, 8)
                 }
                 .padding(.horizontal, 20)
+                .centered(maxWidth: metrics.detailMaxWidth)
             }
             .padding(.bottom, 32)
         }
@@ -139,13 +146,14 @@ struct ResourceDetailView: View {
 
     // MARK: - Small building blocks
 
-    /// The shared look of the three action buttons.
     private func actionLabel(title: String, icon: String) -> some View {
         VStack(spacing: 6) {
             Image(systemName: icon)
                 .font(.title3)
             Text(title)
                 .font(.caption.weight(.medium))
+                .lineLimit(1)
+                .minimumScaleFactor(0.8)
         }
         .frame(maxWidth: .infinity)
         .padding(.vertical, 12)

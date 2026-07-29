@@ -25,11 +25,18 @@ struct MapView: View {
     @State private var searchText = ""
     @FocusState private var isSearchFocused: Bool
 
-    /// The pin the user tapped, if any. Drives the bottom card.
     @State private var selectedResource: Resource?
-
-    /// Set when the user taps "Learn More". Drives the detail page.
     @State private var detailResource: Resource?
+
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
+
+    private var metrics: AdaptiveMetrics {
+        AdaptiveMetrics(
+            horizontalSizeClass: hSizeClass,
+            verticalSizeClass: vSizeClass
+        )
+    }
 
     // MARK: - Filtering
 
@@ -90,22 +97,27 @@ struct MapView: View {
 
             // MARK: Search + filter across the top
             .safeAreaInset(edge: .top) {
-                VStack(spacing: 8) {
+                VStack(spacing: metrics.topBarSpacing) {
 
                     MapSearchBar(searchText: $searchText, isFocused: $isSearchFocused)
                         .padding(.horizontal, 12)
+                        .centered(maxWidth: metrics.isWide ? 600 : .infinity)
 
                     if isSearching {
-                        SearchResultsList(results: visibleResources) { resource in
+                        SearchResultsList(
+                            results: visibleResources,
+                            maxVisible: metrics.searchResultLimit
+                        ) { resource in
                             fly(to: resource)
                         }
                         .padding(.horizontal, 12)
+                        .centered(maxWidth: metrics.isWide ? 600 : .infinity)
                         .transition(.opacity.combined(with: .move(edge: .top)))
                     }
 
                     CategoryFilterBar(selectedCategory: $selectedCategory)
                 }
-                .padding(.top, 8)
+                .padding(.top, metrics.topBarSpacing)
                 .background(.regularMaterial)
                 .animation(.easeInOut(duration: 0.2), value: isSearching)
             }
@@ -130,14 +142,12 @@ struct MapView: View {
                 }
             }
 
-            // Changing the filter can hide the pin that is currently selected.
             .onChange(of: selectedCategory) {
                 withAnimation(.easeInOut(duration: 0.2)) {
                     selectedResource = nil
                 }
             }
 
-            // Clearing the search returns the camera to the whole city.
             .onChange(of: searchText) {
                 if searchText.isEmpty {
                     withAnimation(.easeInOut(duration: 0.8)) {
@@ -150,6 +160,9 @@ struct MapView: View {
                 ResourceDetailView(resource: resource)
             }
         }
+        // Keeps the map screen from switching to a split view on iPad,
+        // which would hide the map behind a sidebar.
+        .navigationViewStyle(.stack)
     }
 
     // MARK: - Camera
@@ -159,8 +172,6 @@ struct MapView: View {
 
         isSearchFocused = false
 
-        // The animation duration is what makes the camera glide
-        // instead of jumping straight to the new coordinate.
         withAnimation(.easeInOut(duration: 1.0)) {
             cameraPosition = .region(
                 MKCoordinateRegion(
@@ -170,8 +181,6 @@ struct MapView: View {
             )
         }
 
-        // Let the camera travel for a moment before the card appears,
-        // so the two animations do not fight for the screen.
         Task {
             try? await Task.sleep(for: .milliseconds(700))
             withAnimation(.spring(response: 0.35, dampingFraction: 0.8)) {
@@ -183,8 +192,6 @@ struct MapView: View {
 
 // MARK: - The pin itself
 
-/// A circular pin tinted by category, with the category icon inside.
-/// Grows slightly when it is the selected pin.
 struct MapPinView: View {
 
     let category: ResourceCategory
@@ -210,4 +217,5 @@ struct MapPinView: View {
 
 #Preview {
     MapView(selectedCategory: .constant(nil))
+        .environment(FavoritesStore())
 }

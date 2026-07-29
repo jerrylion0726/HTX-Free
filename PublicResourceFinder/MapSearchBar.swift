@@ -2,8 +2,8 @@
 //  MapSearchBar.swift
 //  PublicResourceFinder
 //
-//  The search field that sits above the filter bar on the map screen,
-//  plus the small dropdown of matching results.
+//  The search field above the filter bar on the map screen,
+//  plus the dropdown of matching results.
 //
 
 import SwiftUI
@@ -47,6 +47,7 @@ struct MapSearchBar: View {
             RoundedRectangle(cornerRadius: 12)
                 .strokeBorder(.secondary.opacity(0.25), lineWidth: 1)
         }
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     }
 }
 
@@ -56,8 +57,16 @@ struct SearchResultsList: View {
 
     let results: [Resource]
 
+    /// How many rows to show before collapsing into a "+ N more" line.
+    /// Short landscape screens pass a smaller number.
+    var maxVisible: Int = 5
+
     /// Called when the user taps one of the results.
     let onSelect: (Resource) -> Void
+
+    private var shown: [Resource] {
+        Array(results.prefix(maxVisible))
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -73,8 +82,7 @@ struct SearchResultsList: View {
                 .padding(14)
 
             } else {
-                // Only the first few, so the dropdown never covers the map.
-                ForEach(Array(results.prefix(5))) { resource in
+                ForEach(shown) { resource in
 
                     Button {
                         onSelect(resource)
@@ -106,14 +114,14 @@ struct SearchResultsList: View {
                     }
                     .buttonStyle(.plain)
 
-                    if resource.id != results.prefix(5).last?.id {
+                    if resource.id != shown.last?.id {
                         Divider().padding(.leading, 48)
                     }
                 }
 
-                if results.count > 5 {
+                if results.count > maxVisible {
                     Divider()
-                    Text("+ \(results.count - 5) more")
+                    Text("+ \(results.count - maxVisible) more")
                         .font(.caption)
                         .foregroundStyle(.secondary)
                         .frame(maxWidth: .infinity, alignment: .leading)
@@ -125,5 +133,6 @@ struct SearchResultsList: View {
         .background(.regularMaterial)
         .clipShape(RoundedRectangle(cornerRadius: 12))
         .shadow(color: .black.opacity(0.15), radius: 8, y: 3)
+        .dynamicTypeSize(...DynamicTypeSize.xxLarge)
     }
 }

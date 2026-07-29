@@ -23,6 +23,7 @@
 		7C4AD593301961B500D9C85A /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4AD591301961B400D9C85A /* FavoritesStore.swift */; };
 		7C4AD594301961B500D9C85A /* FavoritesView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4AD592301961B500D9C85A /* FavoritesView.swift */; };
 		7C4AD596301966B000D9C85A /* DirectionsHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4AD595301966B000D9C85A /* DirectionsHelper.swift */; };
+		7C4AD598301983AC00D9C85A /* AdaptiveLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7C4AD597301983AC00D9C85A /* AdaptiveLayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -43,6 +44,7 @@
 		7C4AD591301961B400D9C85A /* FavoritesStore.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesStore.swift; sourceTree = "<group>"; };
 		7C4AD592301961B500D9C85A /* FavoritesView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoritesView.swift; sourceTree = "<group>"; };
 		7C4AD595301966B000D9C85A /* DirectionsHelper.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DirectionsHelper.swift; sourceTree = "<group>"; };
+		7C4AD597301983AC00D9C85A /* AdaptiveLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AdaptiveLayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +77,7 @@
 		7C4AD57030192EA300D9C85A /* PublicResourceFinder */ = {
 			isa = PBXGroup;
 			children = (
+				7C4AD597301983AC00D9C85A /* AdaptiveLayout.swift */,
 				7C4AD595301966B000D9C85A /* DirectionsHelper.swift */,
 				7C4AD591301961B400D9C85A /* FavoritesStore.swift */,
 				7C4AD592301961B500D9C85A /* FavoritesView.swift */,
@@ -176,6 +179,7 @@
 				7C4AD58130193D8200D9C85A /* Resource.swift in Sources */,
 				7C4AD586301942ED00D9C85A /* MapView.swift in Sources */,
 				7C4AD594301961B500D9C85A /* FavoritesView.swift in Sources */,
+				7C4AD598301983AC00D9C85A /* AdaptiveLayout.swift in Sources */,
 				7C4AD57430192EA300D9C85A /* ContentView.swift in Sources */,
 				7C4AD593301961B500D9C85A /* FavoritesStore.swift in Sources */,
 				7C4AD59030194EB900D9C85A /* MapSearchBar.swift in Sources */,

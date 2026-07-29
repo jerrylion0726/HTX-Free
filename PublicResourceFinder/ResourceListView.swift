@@ -16,8 +16,16 @@ struct ResourceListView: View {
     @State private var searchText = ""
 
     @Environment(FavoritesStore.self) private var favorites
+    @Environment(\.horizontalSizeClass) private var hSizeClass
+    @Environment(\.verticalSizeClass) private var vSizeClass
 
-    /// Category filter first, then the search text on top of it.
+    private var metrics: AdaptiveMetrics {
+        AdaptiveMetrics(
+            horizontalSizeClass: hSizeClass,
+            verticalSizeClass: vSizeClass
+        )
+    }
+
     private var visibleResources: [Resource] {
 
         var results = allResources
@@ -90,6 +98,7 @@ struct ResourceListView: View {
                 CategoryFilterBar(selectedCategory: $selectedCategory)
             }
         }
+        .navigationViewStyle(.stack)
     }
 }
 
@@ -105,7 +114,6 @@ struct ResourceRow: View {
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
 
-            // Category icon, tinted to match the map pin
             Image(systemName: resource.category.iconName)
                 .font(.title3)
                 .foregroundStyle(resource.category.tint)
@@ -115,6 +123,7 @@ struct ResourceRow: View {
 
                 Text(resource.name)
                     .font(.headline)
+                    .fixedSize(horizontal: false, vertical: true)
 
                 Text(resource.category.rawValue)
                     .font(.caption)
@@ -123,6 +132,7 @@ struct ResourceRow: View {
                 Text(resource.address)
                     .font(.subheadline)
                     .foregroundStyle(.secondary)
+                    .fixedSize(horizontal: false, vertical: true)
             }
 
             Spacer(minLength: 0)
