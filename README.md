@@ -1,4 +1,4 @@
-# Public Resource Finder
+# HTX Free
 
 An iOS app that helps people in Houston find free and low-cost public resources — libraries, food assistance, community centers, health clinics, and education programs — on a map, with real addresses, hours, and phone numbers.
 
@@ -42,8 +42,6 @@ Because the search index includes each resource's service description, queries l
 
 ## Screenshots
 
-## Screenshots
-
 | Map | Filtered by category | Detail card |
 |---|---|---|
 | <img src="screenshots/prf_scrsh1.png" width="240"> | <img src="screenshots/prf_scrsh2.png" width="240"> | <img src="screenshots/prf_scrsh3.png" width="240"> |
@@ -58,7 +56,7 @@ Because the search index includes each resource's service description, queries l
 
 ## Data
 
-**29 resources across 5 categories**, collected July 2026:
+**29 resources across 5 categories**, assembled July 2026:
 
 | Category | Count | Examples |
 |---|---|---|
@@ -70,6 +68,26 @@ Because the search index includes each resource's service description, queries l
 
 Each entry stores: name, category, address, hours, phone, service description, website, and coordinates.
 
+### Where the data came from, and how much to trust it
+
+Entries were assembled from the **Google Places API**. Reliability is not uniform across fields, and it would be misleading to present it as if it were:
+
+| Field | Confidence | Why |
+|---|---|---|
+| Coordinates | High | Google geocoding, usually accurate to the building |
+| Address | High | Matches what Google Maps displays |
+| Phone | Medium-high | From business listings |
+| Hours | Medium | Depends on organizations updating their own listings |
+| Service description | Low-medium | Some written by me from available information rather than official wording |
+| Website | Medium | Only filled where an official URL could be confirmed; 5 left blank |
+
+**The service description field is the one that matters most**, because eligibility and cost rules live there. Verifying the clinic and food assistance entries against official sources is in progress.
+
+**Verification log**
+
+- *Collier Regional Library* — checked against houstonlibrary.org, 1 August 2026. Phone, address and hours all matched.
+  A useful lesson from that check: branch libraries have their own direct numbers, and the number on the Houston Public Library headquarters page is a different line entirely. Verifying against the right page matters as much as verifying at all.
+
 ### A note on the word "free"
 
 Several entries are **not strictly free**, and the app says so rather than hiding it.
@@ -79,6 +97,8 @@ Several entries are **not strictly free**, and the app says so rather than hidin
 - Some **BakerRipley** and **Mission Milby** programs are free; others are not, and availability changes seasonally.
 
 Flattening these into "free" would have made the app cleaner and less honest. Someone who shows up expecting free care and gets a bill is worse off than someone who was told the truth up front. Each description states the actual cost model.
+
+The app's name is a compromise with the same tension, and one I am still uneasy about. "HTX Free" is short and is how someone would actually describe what they are looking for. It also promises something a handful of these listings do not quite deliver.
 
 ### Data limitations
 
@@ -101,26 +121,24 @@ Flattening these into "free" would have made the app cleaner and less honest. So
 
 ## Architecture
 
-```
-PublicResourceFinder/
-├── Resource.swift              Data model + category definitions
-├── ResourceData.swift          The 29 resources
-│
-├── ContentView.swift           Tab bar; owns shared filter + favorites
-│
-├── MapView.swift               Map screen, pins, camera control
-├── MapSearchBar.swift          Search field + results dropdown
-├── CategoryFilterBar.swift     Filter chips (shared by map and list)
-│
-├── ResourceListView.swift      List screen + rows
-├── ResourceCardView.swift      Bottom card shown on pin tap
-├── ResourceDetailView.swift    Full detail page
-├── ResourceImageView.swift     Look Around / satellite / gradient imagery
-│
-├── FavoritesStore.swift        Favorites state + persistence
-├── FavoritesView.swift         Saved tab
-└── DirectionsHelper.swift      Apple Maps handoff
-```
+    HTXFree/
+    ├── Resource.swift              Data model + category definitions
+    ├── ResourceData.swift          The 29 resources
+    │
+    ├── ContentView.swift           Tab bar; owns shared filter + favorites
+    │
+    ├── MapView.swift               Map screen, pins, camera control
+    ├── MapSearchBar.swift          Search field + results dropdown
+    ├── CategoryFilterBar.swift     Filter chips (shared by map and list)
+    │
+    ├── ResourceListView.swift      List screen + rows
+    ├── ResourceCardView.swift      Bottom card shown on pin tap
+    ├── ResourceDetailView.swift    Full detail page
+    ├── ResourceImageView.swift     Look Around / satellite / gradient imagery
+    │
+    ├── FavoritesStore.swift        Favorites state + persistence
+    ├── FavoritesView.swift         Saved tab
+    └── DirectionsHelper.swift      Apple Maps handoff
 
 State flows downward from `ContentView`, which owns both the category filter and the favorites store. The map and list tabs read the same filter, so switching tabs never loses context.
 
@@ -162,11 +180,9 @@ The fix binds the task to the resource ID (`.task(id: resource.id)`) and resets 
 
 **Requirements:** macOS Ventura 13.5+, Xcode 15.2+, iOS 17.0+ simulator or device.
 
-```bash
-git clone https://github.com/jerrylion0726/PublicResourceFinder.git
-cd PublicResourceFinder
-open PublicResourceFinder.xcodeproj
-```
+    git clone https://github.com/jerrylion0726/HTX-Free.git
+    cd HTX-Free
+    open HTXFree.xcodeproj
 
 Then press `⌘R`.
 
@@ -189,11 +205,12 @@ Without this the Simulator has no location and Maps cannot compute a route.
 
 ## Possible Next Steps
 
-1. **"Open now" indicator** — requires restructuring hours into machine-readable data.
-2. **Sort by distance** — requires location permission and a distance calculation.
-3. **Spanish and Vietnamese localization** — the two largest non-English language groups among the populations these services serve.
-4. **Live data source** — pulling from a public API or maintained spreadsheet instead of a compiled file.
-5. **Offline map caching** — the users most likely to need this app are the least likely to have reliable data.
+1. **Finish verifying the clinic and food assistance descriptions** against official sources — the highest-priority item, since eligibility rules live in that field.
+2. **"Open now" indicator** — requires restructuring hours into machine-readable data.
+3. **Sort by distance** — requires location permission and a distance calculation.
+4. **Spanish and Vietnamese localization** — the two largest non-English language groups among the populations these services serve.
+5. **Live data source** — pulling from a public API or maintained spreadsheet instead of a compiled file.
+6. **Offline map caching** — the users most likely to need this app are the least likely to have reliable data.
 
 ---
 
